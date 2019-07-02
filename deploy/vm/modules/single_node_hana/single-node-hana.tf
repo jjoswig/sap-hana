@@ -3,6 +3,10 @@ provider "azurerm" {
   version = "~> 1.30.1"
 }
 
+output "hello_world_test1" {
+  value = "Hello World!"
+}
+
 module "common_setup" {
   source            = "../common_setup"
   allow_ips         = var.allow_ips
