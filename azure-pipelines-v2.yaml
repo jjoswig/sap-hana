@@ -77,16 +77,24 @@ stages:
 #####################################################################
 - stage: DestroyingResources
   dependsOn: CreatingResources
-  condition: succeededOrFailed()
+  condition: or(succeededOrFailed(), always())
   jobs:
   - job: cleanUp
     steps:
       - script: |
           az login --service-principal --user $(hana-pipeline-spn-id) --password  $(hana-pipeline-spn-pw) --tenant $(landscape-tenant) --output none
-          az group delete -n v2-allNew-$(Build.BuildId) --no-wait -y
-          az group delete -n v2-existingRG-$(Build.BuildId) --no-wait -y
-          az group delete -n v2-existingVnet-$(Build.BuildId) --no-wait -y
-          az group delete -n v2-existingNSG-$(Build.BuildId) --no-wait -y
+          rg_list=(
+            v2-allNew-$(Build.BuildId) 
+            v2-existingRG-$(Build.BuildId) 
+            v2-existingVnet-$(Build.BuildId) 
+            v2-existingNSG-$(Build.BuildId)
+          )
+          for rg in "${rg_list[@]}"
+          do
+            if $(az group exists -n $rg); then
+              az group delete -n $rg --no-wait -y
+            fi
+          done
         displayName: 'Clean up'
         env:
           TF_VAR_azure_service_principal_id: $(hana-pipeline-spn-id)
