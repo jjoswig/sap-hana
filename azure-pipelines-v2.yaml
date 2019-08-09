@@ -30,19 +30,19 @@ stages:
     - template: templates/terraform-deployment-steps.yaml
       parameters:
         inputJSONFile: '../pipelineInputJSON/input.auto.tfvars.allNew.json'
-        testCaseName: 'wft-allNew'
+        testCaseName: 'v2-allNew'
         replacePlaceHolder: 'VAR_AZ_RG_NAME'
-        replaceValue: 'wft-allNew-$(Build.BuildId)'
+        replaceValue: 'v2-allNew-$(Build.BuildId)'
   - job: reuseRG
     steps:
     - script: |
         az login --service-principal --user $(hana-pipeline-spn-id) --password  $(hana-pipeline-spn-pw) --tenant $(landscape-tenant) --output none
-        az group create --location westus2 -n wft-existingRG-$(Build.BuildId)
-        echo '##vso[task.setvariable variable=arm_id]$(az group show --name wft-existingRG-$(Build.BuildId) --query id --output tsv)'
+        az group create --location westus2 -n v2-existingRG-$(Build.BuildId)
+        echo '##vso[task.setvariable variable=arm_id]$(az group show --name v2-existingRG-$(Build.BuildId) --query id --output tsv)'
     - template: templates/terraform-deployment-steps.yaml
       parameters:
         inputJSONFile: '../pipelineInputJSON/input.auto.tfvars.existingRG.json'
-        testCaseName: 'wft-existingRG'
+        testCaseName: 'v2-existingRG'
         replacePlaceHolder: 'VAR_AZ_RG_ID'
         replaceValue: $(arm_id)
   - job: reuseVnet
@@ -50,23 +50,23 @@ stages:
     steps:
     - script: |
         az login --service-principal --user $(hana-pipeline-spn-id) --password  $(hana-pipeline-spn-pw) --tenant $(landscape-tenant) --output none
-        echo '##vso[task.setvariable variable=arm_id]$(az network vnet show --resource-group wft-allNew-$(Build.BuildId) --name vnet-management --query id --output tsv)'
+        echo '##vso[task.setvariable variable=arm_id]$(az network vnet show --resource-group v2-allNew-$(Build.BuildId) --name vnet-management --query id --output tsv)'
     - template: templates/terraform-deployment-steps.yaml
       parameters:
         inputJSONFile: '../pipelineInputJSON/input.auto.tfvars.existingVnet.json'
-        testCaseName: 'wft-existingVnet'
+        testCaseName: 'v2-existingVnet'
         replacePlaceHolder: 'VAR_AZ_VNET_ID'
-        replaceValue: $(arm_id)
+        replaceValue: $(arm_id_1)
   - job: reuseNSG
     dependsOn: createAllNew
     steps:
     - script: |
         az login --service-principal --user $(hana-pipeline-spn-id) --password  $(hana-pipeline-spn-pw) --tenant $(landscape-tenant) --output none
-        echo '##vso[task.setvariable variable=arm_id]$(az network nsg show --resource-group wft-allNew-$(Build.BuildId) --name nsg-mgmt --query id --output tsv)'
+        echo '##vso[task.setvariable variable=arm_id]$(az network nsg show --resource-group v2-allNew-$(Build.BuildId) --name nsg-mgmt --query id --output tsv)'
     - template: templates/terraform-deployment-steps.yaml
       parameters:
         inputJSONFile: '../pipelineInputJSON/input.auto.tfvars.existingNSG.json'
-        testCaseName: 'wft-existingNSG'
+        testCaseName: 'v2-existingNSG'
         replacePlaceHolder: 'VAR_AZ_NSG_ID'
         replaceValue: $(arm_id)
 #####################################################################
@@ -83,10 +83,10 @@ stages:
     steps:
       - script: |
           az login --service-principal --user $(hana-pipeline-spn-id) --password  $(hana-pipeline-spn-pw) --tenant $(landscape-tenant) --output none
-          az group delete -n wft-allNew-$(Build.BuildId) --no-wait -y
-          az group delete -n wft-existingRG-$(Build.BuildId) --no-wait -y
-          az group delete -n wft-existingVnet-$(Build.BuildId) --no-wait -y
-          az group delete -n wft-existingNSG-$(Build.BuildId) --no-wait -y
+          az group delete -n v2-allNew-$(Build.BuildId) --no-wait -y
+          az group delete -n v2-existingRG-$(Build.BuildId) --no-wait -y
+          az group delete -n v2-existingVnet-$(Build.BuildId) --no-wait -y
+          az group delete -n v2-existingNSG-$(Build.BuildId) --no-wait -y
         displayName: 'Clean up'
         env:
           TF_VAR_azure_service_principal_id: $(hana-pipeline-spn-id)

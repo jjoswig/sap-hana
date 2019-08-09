@@ -6,9 +6,9 @@ parameters:
 #####################################################################
 # Eg:  inputJSONFile: '../pipelineInputJSON/input.auto.tfvars.      #   
 #      allNew.json'                                                 #
-#      testCaseName: 'wft-all-new'                                  #
+#      testCaseName: 'v2-all-new'                                  #
 #      replacePlaceHolder: 'AZ_RG_NAME'                             #
-#      replaceValue: 'wft-allNew-$(Build.BuildId)'                  #
+#      replaceValue: 'v2-allNew-$(Build.BuildId)'                  #
 #####################################################################
     inputJSONFile: ''
     testCaseName: ''
