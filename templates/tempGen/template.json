@@ -5,7 +5,7 @@
 
             "resource_group" : {
                     "is_existing" : "false",
-                    "name" : "VAR_AZ_RG_NAME"
+                    "name" : "azure-sap-rg"
             },
 
             "vnets" : {

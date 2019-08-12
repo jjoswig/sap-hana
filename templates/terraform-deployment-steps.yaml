@@ -1,48 +1,33 @@
 # This Azure pipeline YAML is a step template that will perform:
-# - Install python tools
+# - update input template with custom JSON
 # - Deployment for the current test case
 
 parameters:
 #####################################################################
-# Eg:  inputJSONFile: '../pipelineInputJSON/input.auto.tfvars.      #   
-#      allNew.json'                                                 #
-#      testCaseName: 'v2-all-new'                                  #
-#      replacePlaceHolder: 'AZ_RG_NAME'                             #
-#      replaceValue: 'v2-allNew-$(Build.BuildId)'                  #
+# Eg:  testCaseName: current test case name eg: v2-reuseVNET-777    #
 #####################################################################
-    inputJSONFile: ''
     testCaseName: ''
-    replacePlaceHolder: ''
-    replaceValue: ''
 steps:
-        - checkout: self
-          clean: "all"
-          path: "sap-hana"
-          persistCredentials: true
-        - script: |
-            pip install packaging
-            pip install --ignore-installed pyyaml ansible[azure]
-            sudo -H pip install msrest==0.6.0
-          displayName: 'Install python tools'
-        - script: |
-            ssh-keygen -b 4096 -t rsa -f /tmp/sshkey -q -N ""
-            cd deploy/v2/terraform
-            sed -i "s|VAR_AZ_RG_NAME|${{parameters.testCaseName}}-$(Build.BuildId)|g" $VAR_FILE_NAME
-            sed -i "s|${{parameters.replacePlaceHolder}}|${{parameters.replaceValue}}|g" $VAR_FILE_NAME
-            cat $VAR_FILE_NAME
-            terraform init
-            terraform apply -auto-approve -var-file=$VAR_FILE_NAME
-          displayName: 'Deploy test case ${{parameters.testCaseName}}'
-          env:
-            VAR_FILE_NAME: ${{parameters.inputJSONFile}}
-            VAR_AZ_RG_NAME: ${{parameters.testCaseName}}-$(Build.BuildId)
-            TF_VAR_azure_service_principal_id: $(hana-pipeline-spn-id)
-            TF_VAR_azure_service_principal_pw: $(hana-pipeline-spn-pw)
-            AZURE_CLIENT_ID: $(hana-pipeline-spn-id)
-            AZURE_SECRET: $(hana-pipeline-spn-pw)
-            AZURE_TENANT: $(landscape-tenant)
-            AZURE_SUBSCRIPTION_ID: $(landscape-subscription)
-            ARM_CLIENT_ID: $(hana-pipeline-spn-id)
-            ARM_CLIENT_SECRET: $(hana-pipeline-spn-pw)
-            ARM_TENANT_ID: $(landscape-tenant)
-            ARM_SUBSCRIPTION_ID: $(landscape-subscription)
+  - script: |
+      ssh-keygen -b 4096 -t rsa -f /tmp/sshkey -q -N ""
+      echo "Update ${{parameters.testCaseName}}.json"
+      cd templates/tempGen
+      python tempGen.py --custom=${{parameters.testCaseName}}.json --template=template.json --output=${{parameters.testCaseName}}.json
+      echo "Input JSON for terraform ready:"
+      cat ${{parameters.testCaseName}}.json
+      echo "Terraform Deployment in Progress..."
+      cd ../../deploy/v2/terraform
+      terraform init
+      terraform apply -auto-approve -var-file=../../../templates/tempGen/${{parameters.testCaseName}}.json
+    displayName: 'Terraform Deployment'
+    env:
+      TF_VAR_azure_service_principal_id: $(hana-pipeline-spn-id)
+      TF_VAR_azure_service_principal_pw: $(hana-pipeline-spn-pw)
+      AZURE_CLIENT_ID: $(hana-pipeline-spn-id)
+      AZURE_SECRET: $(hana-pipeline-spn-pw)
+      AZURE_TENANT: $(landscape-tenant)
+      AZURE_SUBSCRIPTION_ID: $(landscape-subscription)
+      ARM_CLIENT_ID: $(hana-pipeline-spn-id)
+      ARM_CLIENT_SECRET: $(hana-pipeline-spn-pw)
+      ARM_TENANT_ID: $(landscape-tenant)
+      ARM_SUBSCRIPTION_ID: $(landscape-subscription)
