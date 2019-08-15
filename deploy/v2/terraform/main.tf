@@ -18,5 +18,4 @@ module "jumpbox" {
   rg             = module.common_infrastructure.rg
   subnet-mgmt    = module.common_infrastructure.subnet-mgmt
   nsg-mgmt       = module.common_infrastructure.nsg-mgmt
-
 }
