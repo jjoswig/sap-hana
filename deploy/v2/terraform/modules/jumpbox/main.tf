@@ -119,7 +119,6 @@ resource "azurerm_virtual_machine" "vm-linux" {
 
 }
 
-
 # Creates windows vm
 resource "azurerm_virtual_machine" "vm-windows" {
   for_each                      = { for k, v in var.jumpboxes : (k) => (v) if replace(v.os.publisher, "Windows", "") != v.os.publisher }
