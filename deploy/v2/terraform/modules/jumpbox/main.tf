@@ -108,7 +108,7 @@ resource "azurerm_virtual_machine" "vm-linux" {
     disable_password_authentication = true
     ssh_keys {
       path     = "/home/${each.value.authentication.username}/.ssh/authorized_keys"
-      key_data = file(lookup(each.value.authentication, "path_to_public_key", "~/.ssh/ssh_key.pub"))
+      key_data = file(each.value.authentication.path_to_public_key)
     }
   }
 
