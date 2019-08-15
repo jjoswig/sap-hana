@@ -24,7 +24,7 @@ resource "azurerm_storage_account" "storageaccount-bootdiagnostics" {
 
 # NETWORK SECURITY RULES =========================================================================================
 
-# Creates jumpbox rdp network security rule
+# Creates jumpbox RDP network security rule
 resource "azurerm_network_security_rule" "nsr-rdp" {
   name                        = "rdp"
   resource_group_name         = var.rg[0].name
@@ -39,7 +39,7 @@ resource "azurerm_network_security_rule" "nsr-rdp" {
   destination_address_prefix  = "*"
 }
 
-# Creates jumpbox ssh network security rule
+# Creates jumpbox SSH network security rule
 resource "azurerm_network_security_rule" "nsr-ssh" {
   name                        = "ssh"
   resource_group_name         = var.rg[0].name
@@ -56,7 +56,7 @@ resource "azurerm_network_security_rule" "nsr-ssh" {
 
 # NICS ============================================================================================================
 
-# Creates the jumpbox nic and ip
+# Creates the jumpbox NIC and IP address
 resource "azurerm_network_interface" "nic-primary" {
   for_each                      = var.jumpboxes
   name                          = "${each.value.name}-nic1"
@@ -75,7 +75,7 @@ resource "azurerm_network_interface" "nic-primary" {
 
 # VIRTUAL MACHINES ================================================================================================
 
-# Creates linux vm
+# Creates Linux VM
 resource "azurerm_virtual_machine" "vm-linux" {
   for_each                      = { for k, v in var.jumpboxes : (k) => (v) if replace(v.os.publisher, "Windows", "") == v.os.publisher }
   name                          = each.value.name
@@ -116,10 +116,9 @@ resource "azurerm_virtual_machine" "vm-linux" {
     enabled     = true
     storage_uri = azurerm_storage_account.storageaccount-bootdiagnostics.primary_blob_endpoint
   }
-
 }
 
-# Creates windows vm
+# Creates Windows VM
 resource "azurerm_virtual_machine" "vm-windows" {
   for_each                      = { for k, v in var.jumpboxes : (k) => (v) if replace(v.os.publisher, "Windows", "") != v.os.publisher }
   name                          = each.value.name
@@ -156,5 +155,4 @@ resource "azurerm_virtual_machine" "vm-windows" {
     enabled     = true
     storage_uri = azurerm_storage_account.storageaccount-bootdiagnostics.primary_blob_endpoint
   }
-
 }

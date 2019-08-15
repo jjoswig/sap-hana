@@ -15,5 +15,5 @@ variable "subnet-mgmt" {
 }
 
 variable "nsg-mgmt" {
-  description = "Details of the management nsg"
+  description = "Details of the management NSG"
 }
