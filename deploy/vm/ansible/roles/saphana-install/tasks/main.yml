@@ -59,7 +59,7 @@
 
 - name: download s4core
   get_url:
-    url: "https://csb4155cf68c489x4a41xbe8.blob.core.windows.net/s4core/S4Core.zip?sp=r&st=2019-08-16T11:30:54Z&se=2019-08-30T19:30:54Z&spr=https&sv=2018-03-28&sig=AxQ7SG%2FIdKTTLNaKYEP8Y1ryVA4tCQPb35w4cEKu%2F2E%3D&sr=b"
+    url: "URL"
     dest: /hana/shared/install/S4Core.zip
     timeout: "{{ url_timeout }}"
   register: result
@@ -72,3 +72,7 @@
   args:
     chdir: /hana/shared/install
 
+- name: delete s4core
+  command: rm S4Core.zip
+  args:
+    chdir: /hana/shared/install
