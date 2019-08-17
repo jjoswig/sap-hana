@@ -27,6 +27,18 @@ resource "azurerm_network_security_group" "sap_nsg" {
     source_address_prefixes    = var.allow_ips
     destination_address_prefix = "*"
   }
+  
+  security_rule {
+    name                       = "sapinst-web-gui"
+    priority                   = 103
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "4237"
+    source_address_prefixes    = var.allow_ips
+    destination_address_prefix = "*"
+  }
 }
 
 resource "azurerm_network_security_rule" "hana-xsc-rules" {

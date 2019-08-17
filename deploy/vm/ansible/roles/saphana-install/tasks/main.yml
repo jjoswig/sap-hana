@@ -44,6 +44,9 @@
     chdir: /hana/shared/install
     creates: /hana/shared/install/SAP_HANA_DATABASE/hdblcm
 
+- name: add workaround
+  command: echo "127.0.0.1 SLANALYTICSFTP.wdf.sap.corp" >> /etc/hosts
+
 - name: run hdblcm
   shell: "pwd=$(<../hdbserver_{{ sap_sid }}_passwords.xml); echo $pwd | ./hdblcm --batch --action=install --configfile='../hdbserver_{{ sap_sid }}_install.cfg' --read_password_from_stdin=xml"
   args:
