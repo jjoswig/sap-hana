@@ -1,4 +1,7 @@
 ---
+- name: install libatomic
+  command: yast -i libatomic1
+
 - name: create install dir
   file:
     path: /hana/shared/install
@@ -42,6 +45,27 @@
     creates: /hana/shared/install/SAP_HANA_DATABASE/hdblcm
 
 - name: run hdblcm
-  shell: "pwd=$(<../hdbserver_{{ sap_sid }}_passwords.xml); rm ../hdbserver_{{ sap_sid }}_passwords.xml; echo $pwd | ./hdblcm --batch --action=install --configfile='../hdbserver_{{ sap_sid }}_install.cfg' --read_password_from_stdin=xml"
+  shell: "pwd=$(<../hdbserver_{{ sap_sid }}_passwords.xml); echo $pwd | ./hdblcm --batch --action=install --configfile='../hdbserver_{{ sap_sid }}_install.cfg' --read_password_from_stdin=xml"
   args:
     chdir: /hana/shared/install/SAP_HANA_DATABASE
+
+- name: configure hdb
+  shell: "pwd=$(<../hdbserver_{{ sap_sid }}_passwords.xml); rm ../hdbserver_{{ sap_sid }}_passwords.xml; echo $pwd | hdbsql -i 01 -d SYSTEMDB -u SYSTEM -p $pwd \"CREATE DATABASE HDB SYSTEM USER PASSWORD $pwd\""
+  args:
+    chdir: /hana/shared/install/SAP_HANA_DATABASE
+
+- name: download s4core
+  get_url:
+    url: "https://csb4155cf68c489x4a41xbe8.blob.core.windows.net/s4core/S4Core.zip?sp=r&st=2019-08-16T11:30:54Z&se=2019-08-30T19:30:54Z&spr=https&sv=2018-03-28&sig=AxQ7SG%2FIdKTTLNaKYEP8Y1ryVA4tCQPb35w4cEKu%2F2E%3D&sr=b"
+    dest: /hana/shared/install/S4Core.zip
+    timeout: "{{ url_timeout }}"
+  register: result
+  until: result is succeeded
+  retries: "{{ url_retries_cnt }}"
+  delay: "{{ url_retries_delay }}"
+
+- name: unzip s4core
+  command: unzip S4Core.zip
+  args:
+    chdir: /hana/shared/install
+
