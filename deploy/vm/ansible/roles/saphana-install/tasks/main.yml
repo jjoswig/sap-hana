@@ -2,6 +2,9 @@
 - name: install libatomic
   command: yast -i libatomic1
 
+- name: add swap file
+  command: fallocate -l 10G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile && echo "/swapfile swap swap defaults 0 0" | tee /etc/fstab
+
 - name: create install dir
   file:
     path: /hana/shared/install
