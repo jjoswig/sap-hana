@@ -9,6 +9,8 @@ resource null_resource "mount-disks-and-configure-hana" {
     --private-key '${var.sshkey_path_private}' \
     --extra-vars="{ \"url_sapcar\": \"${var.url_sap_sapcar}\", \
      \"url_hdbserver\": \"${var.url_sap_hdbserver}\", \
+     \"url_s4core\": \"${var.url_s4core}\", \
+     \"url_hana_client\": \"${var.url_hana_client}\", \
      \"sap_sid\": \"${var.sap_sid}\", \
      \"sap_instancenum\": \"${var.sap_instancenum}\", \
      \"pwd_os_sapadm\": \"${var.pw_os_sapadm}\", \

@@ -30,7 +30,7 @@ resource "azurerm_network_security_group" "sap_nsg" {
   
   security_rule {
     name                       = "sapinst-web-gui"
-    priority                   = 103
+    priority                   = 110
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"

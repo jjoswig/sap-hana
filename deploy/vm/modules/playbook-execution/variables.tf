@@ -109,6 +109,10 @@ variable "url_di_core" {
   default     = ""
 }
 
+variable "url_hana_client" {
+  description = "URL for the HANA client"
+}
+
 variable "url_hana_studio_windows" {
   description = "URL for the Windows version of HANA Studio to install on the bastion host"
 }
@@ -116,6 +120,11 @@ variable "url_hana_studio_windows" {
 variable "url_portal_services" {
   description = "URL for Portal Services"
   default     = ""
+}
+
+variable "url_s4core" {
+  type        = "string"
+  description = "The URL that points to the s4core package"
 }
 
 variable "url_sap_hdbserver" {

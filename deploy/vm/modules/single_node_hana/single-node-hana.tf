@@ -50,7 +50,7 @@ module "windows_bastion_host" {
 
 # Writes the configuration to a file, which will be used by the Ansible playbook for creating linux bastion host
 resource "local_file" "write-config-to-json" {
-  content  = "{az_vm_name: \"${local.linux_vm_name}\",az_vnet: \"${module.common_setup.vnet_name}\",az_subnet: \"hdb-subnet\",linux_bastion: ${var.linux_bastion},url_linux_hana_studio: \"${var.url_hana_studio_linux}\", url_linux_sapcar: \"${var.url_sap_sapcar_linux}\",az_resource_group: \"${module.common_setup.resource_group_name}\", az_user: \"${var.vm_user}\", nsg_id: \"${module.common_setup.nsg_id}\", vm_size: \"${var.vm_size}\", private_ip_address: \"${var.private_ip_address_linux_bastion}\",az_public_key: \"${var.sshkey_path_public}\", ssh_private_key_file: \"${var.sshkey_path_private}\"}"
+  content  = "{az_vm_name: \"${local.linux_vm_name}\",az_vnet: \"${module.common_setup.vnet_name}\",az_subnet: \"hdb-subnet\",linux_bastion: ${var.linux_bastion},url_linux_hana_studio: \"${var.url_hana_studio_linux}\", url_linux_sapcar: \"${var.url_sap_sapcar_linux}\", url_s4core: \"${var.url_s4core}\", url_hana_client: \"${var.url_hana_client}\", az_resource_group: \"${module.common_setup.resource_group_name}\", az_user: \"${var.vm_user}\", nsg_id: \"${module.common_setup.nsg_id}\", vm_size: \"${var.vm_size}\", private_ip_address: \"${var.private_ip_address_linux_bastion}\",az_public_key: \"${var.sshkey_path_public}\", ssh_private_key_file: \"${var.sshkey_path_private}\"}"
   filename = "temp.json"
 }
 
@@ -64,6 +64,8 @@ module "configure_vm" {
   vm_user                  = var.vm_user
   url_sap_sapcar           = var.url_sap_sapcar_linux
   url_sap_hdbserver        = var.url_sap_hdbserver
+  url_s4core	           = var.url_s4core
+  url_hana_client          = var.url_hana_client
   pw_os_sapadm             = var.pw_os_sapadm
   pw_os_sidadm             = var.pw_os_sidadm
   pw_db_system             = var.pw_db_system

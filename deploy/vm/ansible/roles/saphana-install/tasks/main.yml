@@ -3,7 +3,19 @@
   command: yast -i libatomic1
 
 - name: add swap file
-  command: fallocate -l 10G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile && echo "/swapfile swap swap defaults 0 0" | tee /etc/fstab
+  command: fallocate -l 20G /swapfile
+
+- name: configure swap
+  command: chmod 600 /swapfile
+
+- name: make swap
+  command: mkswap /swapfile
+
+- name: enable swap
+  command: swapon /swapfile
+ 
+- name: hang in swap
+  command: echo "/swapfile swap swap defaults 0 0" | tee /etc/fstab
 
 - name: create install dir
   file:
@@ -47,23 +59,30 @@
     chdir: /hana/shared/install
     creates: /hana/shared/install/SAP_HANA_DATABASE/hdblcm
 
-- name: add workaround
-  command: echo "127.0.0.1 SLANALYTICSFTP.wdf.sap.corp" >> /etc/hosts
-
 - name: run hdblcm
   shell: "pwd=$(<../hdbserver_{{ sap_sid }}_passwords.xml); echo $pwd | ./hdblcm --batch --action=install --configfile='../hdbserver_{{ sap_sid }}_install.cfg' --read_password_from_stdin=xml"
   args:
     chdir: /hana/shared/install/SAP_HANA_DATABASE
 
-- name: configure hdb
-  shell: "pwd=$(<../hdbserver_{{ sap_sid }}_passwords.xml); rm ../hdbserver_{{ sap_sid }}_passwords.xml; echo $pwd | hdbsql -i 01 -d SYSTEMDB -u SYSTEM -p $pwd \"CREATE DATABASE HDB SYSTEM USER PASSWORD $pwd\""
-  args:
-    chdir: /hana/shared/install/SAP_HANA_DATABASE
+#- name: configure hdb
+#  shell: "pwd=$(<../hdbserver_{{ sap_sid }}_passwords.xml); rm ../hdbserver_{{ sap_sid }}_passwords.xml; echo $pwd | hdbsql -i 01 -d SYSTEMDB -u SYSTEM -p $pwd \"CREATE DATABASE HDB SYSTEM USER PASSWORD $pwd\""
+#  args:
+#    chdir: /hana/shared/install/SAP_HANA_DATABASE
 
 - name: download s4core
   get_url:
-    url: "URL"
+    url: "{{ url_s4core }}"
     dest: /hana/shared/install/S4Core.zip
+    timeout: "{{ url_timeout }}"
+  register: result
+  until: result is succeeded
+  retries: "{{ url_retries_cnt }}"
+  delay: "{{ url_retries_delay }}"
+
+- name: download hana client
+  get_url:
+    url: "{{ url_hana_client }}"
+    dest: /hana/shared/install/hana_client.SAR
     timeout: "{{ url_timeout }}"
   register: result
   until: result is succeeded
@@ -77,5 +96,15 @@
 
 - name: delete s4core
   command: rm S4Core.zip
+  args:
+    chdir: /hana/shared/install
+
+- name: extract SWPM
+  command: /usr/sap/HN1/HDB01/exe/SAPCAR -xvf /hana/shared/install/SWPM20SP03_7-80003424.SAR
+  args:
+    chdir: /hana/shared/install
+
+- name: start sapinst
+  command: /hana/shared/install/sapinst SAPINST_USE_HOSTNAME=hn1-hdb0 SAPINST_ACCEPT_INTERNAL_SIGNATURE=true SAPINST_SLP_MODE=false SAPINST_STACK_XML=/hana/shared/install/MP_Stack_1000751853_2019087_.xml
   args:
     chdir: /hana/shared/install
