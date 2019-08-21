@@ -11,6 +11,8 @@
 # ignore key files
 **/tmp
 
+*.swp
+
 # ignore ansible retry files
 *.retry
 
