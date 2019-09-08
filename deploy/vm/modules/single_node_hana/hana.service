@@ -1,0 +1,10 @@
+[Unit]
+Description=HANA Database
+
+[Service]
+Type=forking
+ExecStart=/usr/sap/HN1/HDB01/HDB start
+ExecStop=/usr/sap/HN1/HDB01/HDB stop
+User=hn1adm
+WorkingDirectory=/usr/sap/HN1/HDB01
+TimeoutSec=120

@@ -87,6 +87,10 @@ variable "pw_db_system" {
   description = "Password for the database user SYSTEM"
 }
 
+variable "pw_os_root" {
+  description = "Password for the root user, which is an OS user"
+}
+
 variable "pw_os_sapadm" {
   description = "Password for the SAP admin, which is an OS user"
 }
@@ -128,7 +132,7 @@ variable "sshkey_path_public" {
 
 variable "storage_disk_sizes_gb" {
   description = "List disk sizes in GB for all disks this VM will need"
-  default     = [512, 512, 512]
+  default     = [200, 100, 250]
 }
 
 variable "url_cockpit" {
@@ -252,4 +256,3 @@ locals {
   #name of the linux vm
   linux_vm_name = "${var.az_domain_name}-linux-bastion"
 }
-

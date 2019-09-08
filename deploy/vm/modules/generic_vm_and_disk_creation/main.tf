@@ -26,7 +26,7 @@ resource "azurerm_managed_disk" "disk" {
   count                = length(var.storage_disk_sizes_gb)
   name                 = "${var.machine_name}-disk${count.index}"
   location             = var.az_region
-  storage_account_type = "Premium_LRS"
+  storage_account_type = "Standard_LRS"
   resource_group_name  = var.az_resource_group
   disk_size_gb         = var.storage_disk_sizes_gb[count.index]
   create_option        = "Empty"
@@ -55,7 +55,8 @@ resource "azurerm_virtual_machine" "vm" {
     name              = "${var.machine_name}-OsDisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    managed_disk_type = "Premium_LRS"
+    managed_disk_type = "Standard_LRS"
+    disk_size_gb      = 150
   }
 
   storage_image_reference {
@@ -77,12 +78,6 @@ resource "azurerm_virtual_machine" "vm" {
       path     = "/home/${var.vm_user}/.ssh/authorized_keys"
       key_data = file(var.sshkey_path_public)
     }
-  }
-
-  boot_diagnostics {
-    enabled = "true"
-
-    storage_uri = azurerm_storage_account.bootdiagstorageaccount.primary_blob_endpoint
   }
 
   tags = merge(

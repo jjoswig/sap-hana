@@ -36,7 +36,96 @@ resource "azurerm_network_security_group" "sap_nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "4237"
+    #source_address_prefixes    = ["${chomp(data.http.myip.body)}/32"]
     source_address_prefixes    = var.allow_ips
+    destination_address_prefix = "*"
+  }
+  
+  security_rule {
+    name                       = "sapinst-web-gui_local"
+    priority                   = 111
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "4237"
+    source_address_prefixes    = var.allow_ips
+    destination_address_prefix = "*"
+  }
+  
+  security_rule {
+    name                       = "sapwebdisp-and-sapgw-1"
+    priority                   = 120
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = var.sap_instancenum < 10 ? "3200-320${var.sap_instancenum+1}" : "3200-32${var.sap_instancenum+1}"
+    #source_address_prefixes    = ["${chomp(data.http.myip.body)}/32"]
+    source_address_prefixes    = var.allow_ips
+    destination_address_prefix = "*"
+  }
+  
+  security_rule {
+    name                       = "sapwebdisp-and-sapgw-2"
+    priority                   = 121
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = var.sap_instancenum < 10 ? "3300-330${var.sap_instancenum+1}" : "3300-33${var.sap_instancenum+1}"
+    #source_address_prefixes    = ["${chomp(data.http.myip.body)}/32"]
+    source_address_prefixes    = var.allow_ips
+    destination_address_prefix = "*"
+  }
+  
+  security_rule {
+    name                       = "sapwebdisp-and-sapgw-3"
+    priority                   = 122
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = var.sap_instancenum < 10 ? "4700-470${var.sap_instancenum+1}" : "4700-47${var.sap_instancenum+1}"
+    #source_address_prefixes    = ["${chomp(data.http.myip.body)}/32"]
+    source_address_prefixes    = var.allow_ips
+    destination_address_prefix = "*"
+  }
+  
+  security_rule {
+    name                       = "sapwebdisp-and-sapgw-4"
+    priority                   = 123
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = var.sap_instancenum < 10 ? "4800-480${var.sap_instancenum+1}" : "4800-48${var.sap_instancenum+1}"
+    #source_address_prefixes    = ["${chomp(data.http.myip.body)}/32"]
+    source_address_prefixes    = var.allow_ips
+    destination_address_prefix = "*"
+  }
+  
+  security_rule {
+    name                       = "sap-message-server-port"
+    priority                   = 130
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = var.sap_instancenum < 10 ? "3600-360${var.sap_instancenum+1}" : "3600-36${var.sap_instancenum+1}"
+    source_address_prefixes    = var.allow_ips
+    destination_address_prefix = "*"
+  }
+  
+  security_rule {
+    name                       = "SUM"
+    priority                   = 140
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "1129"
+    source_address_prefixes    = ["${chomp(data.http.myip.body)}/32"]
     destination_address_prefix = "*"
   }
 }

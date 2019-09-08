@@ -66,6 +66,7 @@ module "configure_vm" {
   url_sap_hdbserver        = var.url_sap_hdbserver
   url_s4core	           = var.url_s4core
   url_hana_client          = var.url_hana_client
+  pw_os_root               = var.pw_os_root
   pw_os_sapadm             = var.pw_os_sapadm
   pw_os_sidadm             = var.pw_os_sidadm
   pw_db_system             = var.pw_db_system

@@ -64,6 +64,10 @@ variable "pw_hacluster" {
   default     = ""                                  #single node case doesn't need one
 }
 
+variable "pw_os_root" {
+  description = "Password for the root user, which is an OS user"
+}
+
 variable "pw_os_sapadm" {
   description = "Password for the SAP admin, which is an OS user"
 }

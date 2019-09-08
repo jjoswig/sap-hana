@@ -13,6 +13,7 @@ resource null_resource "mount-disks-and-configure-hana" {
      \"url_hana_client\": \"${var.url_hana_client}\", \
      \"sap_sid\": \"${var.sap_sid}\", \
      \"sap_instancenum\": \"${var.sap_instancenum}\", \
+     \"pwd_os_root\": \"${var.pw_os_root}\", \
      \"pwd_os_sapadm\": \"${var.pw_os_sapadm}\", \
      \"pwd_os_sidadm\": \"${var.pw_os_sidadm}\", \
      \"pwd_db_system\": \"${var.pw_db_system}\", \

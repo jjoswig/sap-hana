@@ -1,0 +1,9 @@
+[Unit]
+Description=SAP System
+
+[Service]
+Type=forking
+ExecStart=/usr/sap/S01/sapstart.sh start
+User=s01adm
+WorkingDirectory=/usr/sap/S01
+TimeoutSec=120

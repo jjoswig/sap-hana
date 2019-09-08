@@ -1,1 +1,1 @@
-{"failed": false, "changed": false, "ansible_facts": {"azure_publicipaddresses": []}, "publicipaddresses": []}
+{"failed": false, "publicipaddresses": [], "changed": false, "ansible_facts": {"azure_publicipaddresses": []}, "warnings": ["Installed azure-mgmt-network client version is 2.7.0. The expected version is 2.3.0. Try `pip install ansible[azure]`"]}
